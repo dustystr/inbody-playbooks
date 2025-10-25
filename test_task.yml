@@ -2,6 +2,8 @@
 - hosts: inbody_nucs
   become: true
   tasks:
-    - name: Print OS info
-      ansible.builtin.package:
-        name: apache2
+    - name: Touch test file
+      ansible.builtin.file:
+        path: /etc/test_touch_task_result.file
+        state: touch
+        mode: u=rw,g=r,o=r
