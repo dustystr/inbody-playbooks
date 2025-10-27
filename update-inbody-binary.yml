@@ -11,3 +11,22 @@
         dest: /home/semaphore/inbody.exe
         mode: '0440'
         force: yes
+
+    - name: Stop inbody service
+      ansible.builtin.service:
+        name: inbody
+        state: stopped
+
+    - name: Copy new binary
+      ansible.builtin.copy:
+        src: /home/semaphore/inbody.exe
+        dest: /opt/inbody/inbody.exe
+        mode: '0777'
+
+    - name: Start inbody service
+      ansible.builtin.service:
+        name: inbody
+        state: started
+
+    - name: Remove already existed download
+      ansible.builtin.shell: rm -f /home/semaphore/inbody.exe
