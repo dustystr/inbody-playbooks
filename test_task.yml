@@ -4,6 +4,6 @@
   tasks:
     - name: Touch test file
       ansible.builtin.file:
-        path: /etc/test_touch_task_result.file
+        path: /home/semaphore/test_touch.file
         state: touch
         mode: u=rw,g=r,o=r
