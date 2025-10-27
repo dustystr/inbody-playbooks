@@ -9,7 +9,7 @@
       ansible.builtin.get_url:
         url: https://storage.yandexcloud.net/ddx-mobile-app/last-releast/inbody.exe
         dest: /home/semaphore/inbody.exe
-        mode: '0440'
+        mode: '0777'
         force: yes
 
     - name: Stop inbody service
@@ -17,16 +17,10 @@
         name: inbody
         state: stopped
 
-    - name: Copy new binary
-      ansible.builtin.copy:
-        src: /home/semaphore/inbody.exe
-        dest: /opt/inbody/inbody.exe
-        mode: '0777'
+    - name: move new binary
+      ansible.builtin.command: mv /home/semaphore/inbody.exe /opt/inbody/inbody.exe
 
     - name: Start inbody service
       ansible.builtin.service:
         name: inbody
         state: started
-
-    - name: Remove already existed download
-      ansible.builtin.shell: rm -f /home/semaphore/inbody.exe
