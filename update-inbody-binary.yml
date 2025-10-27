@@ -4,6 +4,6 @@
   tasks:
     - name: Download latest binary
       ansible.builtin.get_url:
-      url: https://storage.yandexcloud.net/ddx-mobile-app/last-releast/inbody.exe
-      dest: /home/semaphore/inbody.exe
-      mode: '0440'
+        url: https://storage.yandexcloud.net/ddx-mobile-app/last-releast/inbody.exe
+        dest: /home/semaphore/inbody.exe
+        mode: '0440'
