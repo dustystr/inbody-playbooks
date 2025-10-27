@@ -8,3 +8,4 @@
         dest: /home/semaphore/inbody.exe
         mode: '0440'
         force: yes
+      become: yes
