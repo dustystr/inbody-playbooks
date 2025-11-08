@@ -1,0 +1,12 @@
+---
+- hosts: labrat
+  become: true
+  tasks:
+    - name: Get hostname
+      ansible.builtin.command: hostname
+      register: nuc_hostname
+
+    - name: Print the gateway for each host when defined
+      ansible.builtin.debug:
+        msg: Hostname is {{nuc_hostname}}
+      when: nuc_hostname is defined
