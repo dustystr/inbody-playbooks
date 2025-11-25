@@ -1,0 +1,75 @@
+---
+- name: Deploy and configure Zabbix Agent
+  hosts: labrat
+  become: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+
+    - name: Install prerequisites
+      package:
+        name:
+          - wget
+          - gnupg
+        state: present
+
+    - name: Download Zabbix repository package
+      get_url:
+        url: "https://repo.zabbix.com/zabbix/6.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_6.0+ubuntu24.04_all.deb"
+        dest: /tmp/zabbix-release_latest_6.0+ubuntu24.04_all.deb
+        mode: '0644'
+
+    - name: Install Zabbix repository
+      apt:
+        deb: /tmp/zabbix-release_latest_6.0+ubuntu24.04_all.deb
+      when: ansible_os_family == "Debian"
+
+    - name: Install Zabbix Agent
+      package:
+        name:
+          - zabbix-agent
+          - zabbix-agent2
+        state: present
+
+    - name: Create zabbix agent configuration directory
+      file:
+        path: /etc/zabbix/zabbix_agentd.d
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Configure Zabbix Agent
+      template:
+        src: templates/zabbix_agentd.conf.j2
+        dest: /etc/zabbix/zabbix_agentd.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: restart zabbix-agent
+
+    - name: Ensure Zabbix Agent is enabled and started
+      systemd:
+        name: zabbix-agent
+        state: started
+        enabled: yes
+        daemon_reload: yes
+
+    - name: Check Zabbix Agent status
+      command: systemctl is-active zabbix-agent
+      register: zabbix_status
+      changed_when: false
+
+    - name: Show Zabbix Agent status
+      debug:
+        msg: "Zabbix Agent is {{ zabbix_status.stdout }} on {{ inventory_hostname }}"
+
+  handlers:
+    - name: restart zabbix-agent
+      systemd:
+        name: zabbix-agent
+        state: restarted
