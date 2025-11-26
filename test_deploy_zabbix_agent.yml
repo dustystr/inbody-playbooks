@@ -1,6 +1,6 @@
 ---
 - name: Deploy and configure Zabbix Agent
-  hosts: labrat
+  hosts: zabbix_agents
   become: yes
 
   tasks:
@@ -19,19 +19,18 @@
 
     - name: Download Zabbix repository package
       get_url:
-        url: "https://repo.zabbix.com/zabbix/6.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_6.0+ubuntu24.04_all.deb"
-        dest: /tmp/zabbix-release_latest_6.0+ubuntu24.04_all.deb
+        url: "{{ zabbix_repo_url }}/{{ zabbix_repo_package }}"
+        dest: /tmp/{{ zabbix_repo_package }}
         mode: '0644'
 
     - name: Install Zabbix repository
       apt:
-        deb: /tmp/zabbix-release_latest_6.0+ubuntu24.04_all.deb
+        deb: /tmp/{{ zabbix_repo_package }}
       when: ansible_os_family == "Debian"
 
     - name: Install Zabbix Agent
       package:
         name:
-          - zabbix-agent
           - zabbix-agent2
         state: present
 
@@ -45,8 +44,8 @@
 
     - name: Configure Zabbix Agent
       template:
-        src: templates/zabbix_agentd.conf.j2
-        dest: /etc/zabbix/zabbix_agentd.conf
+        src: zabbix_agent2.conf.j2
+        dest: /etc/zabbix/zabbix_agent2.conf
         owner: root
         group: root
         mode: '0644'
