@@ -37,7 +37,7 @@
           - zabbix-agent2
         state: present
 
-    - name: Удалить файл
+    - name: Remove default config
       ansible.builtin.file:
         path: /etc/zabbix/zabbix_agent2.conf
         state: absent
