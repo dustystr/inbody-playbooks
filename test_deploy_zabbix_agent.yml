@@ -37,18 +37,15 @@
           - zabbix-agent2
         state: present
 
-    - name: Create zabbix agent configuration directory
-      file:
-        path: /etc/zabbix/zabbix_agent2.d
-        state: directory
-        owner: root
-        group: root
-        mode: '0755'
+    - name: Удалить файл
+      ansible.builtin.file:
+        path: /etc/zabbix/zabbix_agent2.conf
+        state: absent
 
     - name: Configure Zabbix Agent
       template:
         src: zabbix_agent2.conf.j2
-        dest: /etc/zabbix/zabbix_agent2.d/zabbix_agent2.conf
+        dest: /etc/zabbix/zabbix_agent2.conf
         owner: root
         group: root
         mode: '0644'
