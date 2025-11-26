@@ -1,6 +1,6 @@
 ---
 - name: Deploy and configure Zabbix Agent
-  hosts: zabbix_agents
+  hosts: labrat
   become: yes
 
   tasks:
