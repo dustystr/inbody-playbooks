@@ -502,5 +502,5 @@ ControlSocket=/run/zabbix/agent.sock
 Include=./zabbix_agent2.d/plugins.d/*.conf
 
 ### Custom parameters
-EnableRemoteCommands=1
-UnsafeUserParameters=1
+AllowKey=system.run[*]
+RefreshActiveChecks=120
