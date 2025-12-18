@@ -9,8 +9,6 @@
         update_cache: yes
       async: 180
       poll: 10
-      register: update_result
-      until: update_result.rc == 0
       retries: 3
       delay: 5
 
