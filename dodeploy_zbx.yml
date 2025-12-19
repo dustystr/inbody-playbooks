@@ -1,0 +1,47 @@
+---
+- name: Deploy and configure Zabbix Agent
+  hosts: labrat
+  become: yes
+
+  tasks:
+    - name: Install Zabbix Agent
+      package:
+        name:
+          - zabbix-agent2
+        state: present
+
+    - name: Remove default config
+      ansible.builtin.file:
+        path: /etc/zabbix/zabbix_agent2.conf
+        state: absent
+
+    - name: Configure Zabbix Agent
+      template:
+        src: zabbix_agent2.conf.j2
+        dest: /etc/zabbix/zabbix_agent2.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: restart zabbix-agent2
+
+    - name: Ensure Zabbix Agent is enabled and started
+      systemd:
+        name: zabbix-agent2
+        state: started
+        enabled: yes
+        daemon_reload: yes
+
+    - name: Check Zabbix Agent status
+      command: systemctl is-active zabbix-agent2
+      register: zabbix_status
+      changed_when: false
+
+    - name: Show Zabbix Agent status
+      debug:
+        msg: "Zabbix Agent is {{ zabbix_status.stdout }} on {{ inventory_hostname }}"
+
+  handlers:
+    - name: restart zabbix-agent2
+      systemd:
+        name: zabbix-agent2
+        state: restarted
