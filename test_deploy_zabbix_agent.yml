@@ -7,7 +7,7 @@
     - name: Update apt cache
       apt:
         update_cache: yes
-      async: 180
+      async: 120
       poll: 10
       retries: 3
       delay: 5
@@ -19,17 +19,13 @@
           - gnupg
           - lm-sensors
         state: present
-      async: 180
-      poll: 10
-      retries: 3
-      delay: 5
 
     - name: Download Zabbix repository package
       get_url:
         url: "{{ zabbix_repo_url }}/{{ zabbix_repo_package }}"
         dest: /tmp/{{ zabbix_repo_package }}
         mode: '0644'
-      async: 180
+      async: 120
       poll: 10
       retries: 3
       delay: 5
@@ -37,15 +33,11 @@
     - name: Install Zabbix repository
       ansible.builtin.apt:
         deb: /tmp/{{ zabbix_repo_package }}
-      async: 180
-      poll: 10
-      retries: 3
-      delay: 5
 
     - name: Update apt cache
       apt:
         update_cache: yes
-      async: 180
+      async: 120
       poll: 10
       retries: 3
       delay: 5
@@ -55,19 +47,11 @@
         name:
           - zabbix-agent2
         state: present
-      async: 180
-      poll: 10
-      retries: 3
-      delay: 5
 
     - name: Remove default config
       ansible.builtin.file:
         path: /etc/zabbix/zabbix_agent2.conf
         state: absent
-      async: 180
-      poll: 10
-      retries: 3
-      delay: 5
 
     - name: Configure Zabbix Agent
       template:
@@ -77,10 +61,6 @@
         group: root
         mode: '0644'
       notify: restart zabbix-agent2
-      async: 180
-      poll: 10
-      retries: 3
-      delay: 5
 
     - name: Ensure Zabbix Agent is enabled and started
       systemd:
@@ -88,19 +68,11 @@
         state: started
         enabled: yes
         daemon_reload: yes
-      async: 180
-      poll: 10
-      retries: 3
-      delay: 5
 
     - name: Check Zabbix Agent status
       command: systemctl is-active zabbix-agent2
       register: zabbix_status
       changed_when: false
-      async: 180
-      poll: 10
-      retries: 3
-      delay: 5
 
     - name: Show Zabbix Agent status
       debug:
