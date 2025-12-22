@@ -1,0 +1,21 @@
+---
+- name: Install monitoring prerequisites
+  hosts: labrat
+  become: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      async: 120
+      poll: 10
+      retries: 3
+      delay: 5
+
+    - name: Install prerequisites
+      package:
+        name:
+          - wget
+          - gnupg
+          - lm-sensors
+        state: present
