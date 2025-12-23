@@ -1,6 +1,7 @@
 ---
 - name: Install monitoring prerequisites
   hosts: labrat
+  gather_facts: no
   become: yes
 
   tasks:
