@@ -1,0 +1,32 @@
+---
+- name: Install Zabbix Agent 2
+  hosts: labrat
+  become: yes
+
+- name: Download Zabbix repository package
+      get_url:
+        url: "{{ zabbix_repo_url }}/{{ zabbix_repo_package }}"
+        dest: /tmp/{{ zabbix_repo_package }}
+        mode: '0644'
+      async: 120
+      poll: 10
+      retries: 3
+      delay: 5
+
+    - name: Install Zabbix repository
+      ansible.builtin.apt:
+        deb: /tmp/{{ zabbix_repo_package }}
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      async: 120
+      poll: 10
+      retries: 3
+      delay: 5
+
+    - name: Install Zabbix Agent
+      package:
+        name:
+          - zabbix-agent2
+        state: present
