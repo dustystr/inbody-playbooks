@@ -3,7 +3,8 @@
   hosts: labrat
   become: yes
 
-- name: Download Zabbix repository package
+  tasks:
+    - name: Download Zabbix repository package
       get_url:
         url: "{{ zabbix_repo_url }}/{{ zabbix_repo_package }}"
         dest: /tmp/{{ zabbix_repo_package }}
