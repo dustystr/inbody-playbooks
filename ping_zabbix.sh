@@ -1,54 +1,5 @@
 #!/bin/bash
 
-# Функция для показа справки
-show_help() {
-    echo "Использование: $0 [ОПЦИИ]"
-    echo "Пинг указанного IP-адреса"
-    echo ""
-    echo "Опции:"
-    echo "  -i, --ip IP-АДРЕС    IP-адрес для пингования (обязательно)"
-    echo "  -c, --count ЧИСЛО    Количество пакетов для отправки (по умолчанию: 4)"
-    echo "  -h, --help           Показать эту справку"
-    echo ""
-    echo "Пример:"
-    echo "  $0 --ip 192.168.15.108"
-    echo "  $0 -i 8.8.8.8 -c 2"
-}
-
-# Значения по умолчанию
-IP=""
-COUNT=4
-
-# Обработка аргументов командной строки
-while [[ $# -gt 0 ]]; do
-    case $1 in
-        -i|--ip)
-            IP="$2"
-            shift 2
-            ;;
-        -c|--count)
-            COUNT="$2"
-            shift 2
-            ;;
-        -h|--help)
-            show_help
-            exit 0
-            ;;
-        *)
-            echo "Ошибка: неизвестная опция $1"
-            show_help
-            exit 1
-            ;;
-    esac
-done
-
-# Проверяем, указан ли IP-адрес
-if [ -z "$IP" ]; then
-    echo "Ошибка: не указан IP-адрес"
-    show_help
-    exit 1
-fi
-
 # Функция для проверки корректности IP-адреса
 validate_ip() {
     local ip=$1
@@ -65,21 +16,26 @@ validate_ip() {
     return $stat
 }
 
+# Проверяем, передан ли аргумент
+if [ $# -eq 0 ]
+then
+    echo "Ошибка: не указан IP-адрес"
+    echo "Использование: $0 <IP-адрес>"
+    echo "Пример: $0 192.168.15.108"
+    exit 1
+fi
+
+IP="$1"
+
 # Проверяем корректность IP-адреса
-if ! validate_ip "$IP"; then
+if ! validate_ip "$IP"
+then
     echo "Ошибка: '$IP' не является корректным IP-адресом"
     exit 1
 fi
 
-# Проверяем, что COUNT - положительное число
-if ! [[ "$COUNT" =~ ^[0-9]+$ ]] || [ "$COUNT" -lt 1 ]; then
-    echo "Ошибка: количество пакетов должно быть положительным числом"
-    exit 1
-fi
-
-echo "Пингую $IP ($COUNT пакетов)..."
-
-if ping -c "$COUNT" "$IP" &> /dev/null
+echo "Пингую $IP ..."
+if ping -c 4 "$IP" &> /dev/null
 then
     echo "✅ Ping SUCCESS! ($IP)"
 else
